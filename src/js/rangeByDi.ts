@@ -1,34 +1,30 @@
-
 import  {Model} from  './rangeModel';
 import  {View} from  './rangeView';
-import  {Options} from  './rangeModel';
+import  {Presenter} from  './rangePresent';
+import  {Options} from  './rangePresent';
 
-// interface JQuery {
-//     myPlugin: (text:string, big:boolean) => void
-// }
-// interface Options{
-//     fontSize: string,
-//     background: string
-// }
-// import {Model} from './rangeModel';
-// (function($){
-//      $.fn.myPlugin = function(a, b) :void {
-//         // if(b){
-//         //     // let opt: Options = {
-//         //     //     fontSize: '30px',
-//         //     //     background: 'yellow'
-//         //     // }
-//         //     this.html(a);
-//         //     this.css({'font-size':opt.fontSize, 'background':opt.background}); 
-//         // }
-//         this.html(a);
-   
-//     };
-// })(jQuery);
+declare global{//Обьявляем глобальный интерфейс, т.к. при наличии импортов и экспортов изменения глобальных интерфейсов не происходят, так как создается новый тип
+    interface JQuery {
+        myPlugin: (options:Options)=>void
+    }
+}
 
-let model = new Model();
-let view = new View();
+(function($){
+     $.fn.myPlugin = function(options:Options) {
+
+        let model = new Model(),
+            view = new View(),
+            present = new Presenter(options, model);
+
+        present.changeModel(model, {min:16, max:6666, range:false});
+        model.setProps(model.newOpt);
+
+        console.log(model);
+
+        
+        
+        this.html(view.rangeSlider);
 
 
-console.log(view);
-console.log(model);
+    };
+})(jQuery);

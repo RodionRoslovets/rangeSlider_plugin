@@ -43,4 +43,13 @@ describe('Тест модели', ()=>{
     it('Экземпляр модели имеет метод setProps', ()=>{
         expect(model).to.have.property('setProps');
     });
+    it('Экземпляр модели имеет метод count', ()=>{
+        expect(model).to.have.property('count');
+    });
+    it('метод count возвращает число', ()=>{
+        assert.isNumber(model.count({min:2, max:2, range:false}));
+    });
+    it('Экземпляр модели имеет метод getRes', ()=>{
+        expect(model).to.have.property('getRes');
+    });
 });

@@ -13,15 +13,15 @@ describe('Тест вида', ()=>{
     it('Экземпляр вида имеет свойство rangeSlider', ()=>{
         expect(view).to.have.a.property('rangeSlider');
     });
-    it('Экземпляр вида имеет свойство base', ()=>{
-        expect(view).to.have.a.property('base');
-    });
-    it('Экземпляр вида имеет свойство filler', ()=>{
-        expect(view).to.have.a.property('filler');
-    });
-    it('Экземпляр вида имеет свойство runer', ()=>{
-        expect(view).to.have.a.property('runer');
-    });
+    // it('Экземпляр вида имеет свойство base', ()=>{
+    //     expect(view).to.have.a.property('base');
+    // });
+    // it('Экземпляр вида имеет свойство filler', ()=>{
+    //     expect(view).to.have.a.property('filler');
+    // });
+    // it('Экземпляр вида имеет свойство runer', ()=>{
+    //     expect(view).to.have.a.property('runer');
+    // });
     it('Экземпляр вида имеет метод changeView', ()=>{
         expect(view).to.have.a.property('changeView');
     });

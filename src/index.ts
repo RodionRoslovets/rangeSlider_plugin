@@ -1,5 +1,6 @@
 import './js/rangeByDi.ts';
 import { Options } from './js/rangePresent';
+import { viewOpt } from './js/rangePresent';
 
 let opt:Options = {
     min :12,
@@ -16,6 +17,17 @@ let opt:Options = {
     step:0,
     range:true
 };
-$('.one').myPlugin(opt);
-$('.two').myPlugin(opt2);
+
+let viewOpt:viewOpt = {
+    background:'red',
+    width:100,
+    height:10
+}, viewOpt2:viewOpt ={
+    background:'green',
+    width:200,
+    height:20
+};
+
+$('.one').myPlugin(opt, viewOpt);
+$('.two').myPlugin(opt2, viewOpt2);
 $('.three').myPlugin(opt3);

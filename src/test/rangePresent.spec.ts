@@ -23,4 +23,7 @@ describe('Тест представления', ()=>{
     it('Экземпляр представления имеет метод changeModel', ()=>{
         expect(presenter).to.have.property('changeModel');
     });
+    it('Экземпляр представления имеет метод changeView', ()=>{
+        expect(presenter).to.have.property('changeView');
+    });
 });

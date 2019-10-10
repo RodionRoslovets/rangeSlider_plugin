@@ -4,25 +4,25 @@ var assert = require('chai').assert;//достали утверждения из
 var expect = require('chai').expect//достали ожидание из чая
 var should = require('chai').should();//достали "должен быть" из чая
 
-let view = new View();
+let view = new View(document.body);
 
-describe('Тест вида', ()=>{
-    it('Экземпляр вида имеет прототип вида', ()=>{
-        expect(view).to.be.an.instanceOf(View);
+describe("Тестирование Вида", ()=>{
+    it("Вид имеет свойство base", ()=>{
+        assert.property(view, "base");
     });
-    it('Экземпляр вида имеет свойство rangeSlider', ()=>{
-        expect(view).to.have.a.property('rangeSlider');
+    it("Вид имеет свойство filler", ()=>{
+        assert.property(view, "filler");
     });
-    // it('Экземпляр вида имеет свойство base', ()=>{
-    //     expect(view).to.have.a.property('base');
-    // });
-    // it('Экземпляр вида имеет свойство filler', ()=>{
-    //     expect(view).to.have.a.property('filler');
-    // });
-    // it('Экземпляр вида имеет свойство runer', ()=>{
-    //     expect(view).to.have.a.property('runer');
-    // });
-    it('Экземпляр вида имеет метод changeView', ()=>{
-        expect(view).to.have.a.property('changeView');
+    it("Вид имеет свойство runner", ()=>{
+        assert.property(view, "runner");
+    });
+    it("Вид имеет свойство slider", ()=>{
+        assert.property(view, 'slider');
+    });
+    it("Вид имеет метод moveSlider", ()=>{
+        assert.property(view, 'moveSlider');
+    });
+    it("Вид имеет метод clickMove", ()=>{
+        assert.property(view, 'clickMove');
     });
 });

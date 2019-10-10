@@ -1,25 +1,4 @@
-.range-wrapper{
-    width:auto;
-}
-.range{
-    &__heading{
-        display:flex;
-        justify-content: space-between;
-        margin-bottom:18px;
-        line-height: 15px;
-        &-text{
-            font-family: Montserrat-Bold;
-            text-transform: uppercase;
-        }
-    }
-    &__values{
-        display:flex;
-        font-family: 'Montserrat';
-        font-size:12px;
-    }
-}
-
-.slider{
+.rangeByD-slider{
     &__base{
         position:relative;
         width:100%;
@@ -29,22 +8,22 @@
         border-radius:3px;
         display:flex;
         align-items:center;
-        justify-content: center;
         z-index: 0;
-        &-hover{
-            position:absolute;
-            z-index: 0;
-            width: 34%;
-            left: 75px;
-            height:6px;
-            background: linear-gradient(180deg, #6fcf97 0%, #66D2EA 100%);
-            border-radius:3px;
-            cursor:pointer;
-        }
     }
-    &__left-btn, &__right-btn{
+    &__filler{
+        position:absolute;
+        z-index: 0;
+        width: 0px;
+        left:0;
+        height:6px;
+        background: linear-gradient(180deg, #6fcf97 0%, #66D2EA 100%);
+        border-radius:3px;
+        cursor:pointer;
+    }
+    &__runner{
         position: absolute;
         z-index: 2;
+        left:-2px;
         width:14px;
         height:14px;
         border:2px solid #fff;
@@ -52,14 +31,14 @@
         border-radius: 50%;
         cursor:pointer;
     }
-    &__left-btn{
-        left:75px;
-        cursor:pointer;
-    }
-    &__right-btn{
-        right:90px;
-        @media screen and (max-width:1199px) and (min-width:900px){
-            right:45px;
-        }
-    }
+    // &__left-btn &__right-btn{
+    //     left:75px;
+    //     cursor:pointer;
+    // }
+    // &__right-btn{
+    //     right:90px;
+    //     @media screen and (max-width:1199px) and (min-width:900px){
+    //         right:45px;
+    //     }
+    // }
 }

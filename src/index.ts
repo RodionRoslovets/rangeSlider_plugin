@@ -3,12 +3,17 @@ import './scss/new.scss';
 import { Options } from './js/rangePresent';
 
 let opt:Options = {
-    min :12,
-    max:15,
+    range:false
+};
+let opt2:Options = {
     range:true
 };
-let aaa = document.getElementsByClassName('one')[0];
-let bbb = document.getElementsByClassName('two')[0];
+let opt3:Options = {
+    vertical:true
+};
 
-$('.one').myPlugin(opt, aaa);
-$('.two').myPlugin(opt, bbb);
+
+$('.one').myPlugin(opt);
+$('.two').myPlugin(opt2);
+$('.three').myPlugin();
+$('.four').myPlugin(opt3);

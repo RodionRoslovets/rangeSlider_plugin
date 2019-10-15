@@ -15,5 +15,6 @@ declare global{//Обьявляем глобальный интерфейс, т.
         let view = new View(options);
 
         this.html(view.slider);
+        
     };
 })(jQuery);

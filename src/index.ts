@@ -11,9 +11,14 @@ let opt2:Options = {
 let opt3:Options = {
     vertical:true
 };
+let opt4:Options = {
+    range:true,
+    vertical:true
+};
 
 
 $('.one').myPlugin(opt);
 $('.two').myPlugin(opt2);
 $('.three').myPlugin();
 $('.four').myPlugin(opt3);
+$('.five').myPlugin(opt4);

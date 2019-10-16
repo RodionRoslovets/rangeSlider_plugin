@@ -40,6 +40,13 @@ export class View {
                 this.runner.classList.add('rangeByD-slider__runner__vertical');
                 this.runner.classList.add('bottom-runner');
                 this.filler.classList.add('vertical-view');
+                if(options.range){
+                    this.runner2 = document.createElement('div');
+                    this.runner2.classList.add('rangeByD-slider__runner');
+                    this.runner2.classList.add('rangeByD-slider__runner__vertical');
+                    this.runner2.classList.add('top-runner');
+                    this.filler.classList.add('filler-range'); 
+                }
             }
         }
 
@@ -88,7 +95,12 @@ export class View {
             if(runner.classList.contains('rangeByD-slider__runner__vertical')){
                 click < 0 ? click = 0 : click = click;
                 click >= parent.offsetHeight - runnerMiddle ? click = parent.offsetHeight - runner.offsetHeight/2 : click = click;
-                runner.style.bottom = click + "px";
+                if(runner.classList.contains('top-runner')){
+                    runner.style.top = parent.offsetHeight - click - runner.offsetHeight + "px";
+                }else{
+                    runner.style.bottom = click + "px";
+                }
+                
             } else {
                 click < -2 ? click = -2 : click = click;
                 click >= parent.offsetWidth - runnerMiddle ? click = parent.offsetWidth - runnerMiddle : click = click;
@@ -124,7 +136,25 @@ export class View {
                     }
                 }
                 
-            }       
+            } 
+
+            if(runner.classList.contains('bottom-runner')){
+                for(let i= 0; i < parent.children.length; i++){
+                    if(parent.children[i].classList.contains('top-runner')){
+                        let topRunner:any = parent.children[i];
+                        filler.style.bottom = runner.style.bottom;
+                        filler.style.height = parent.offsetHeight - click - topRunner.offsetTop - runner.offsetHeight/2 + 'px';
+                    }
+                }
+            } else {
+                for(let i = 0;i< parent.children.length;i++){
+                    if(parent.children[i].classList.contains('bottom-runner')){
+                        let bottomRunner:any = parent.children[i];
+                        filler.style.bottom = bottomRunner.style.bottom || '0px';
+                        filler.style.height = parent.offsetHeight - runner.offsetTop - (parent.offsetHeight - bottomRunner.offsetTop) + runner.offsetHeight/2 + 'px';
+                    }
+                }
+            }   
         }
 
         document.onmouseup = () => {
@@ -171,16 +201,35 @@ export class View {
         runnerHalf = runners![0].offsetWidth / 2;
 
         if(runners!.length >= 2){
-            let firstZone = runners![0].offsetLeft + halfFiller;
-
-            if(click <= firstZone){
-                runners![0].style.left = click - runnerHalf + 'px';
-                filler!.style.left = runners![0].style.left;
-                filler!.style.width = runners![1].offsetLeft - runners![0].offsetLeft + runnerHalf + 'px';
+            let firstZone:number;
+            
+            if(runners![0].classList.contains('rangeByD-slider__runner__vertical')){
+                firstZone = /* runners![0].getBoundingClientRect().bottom - target.offsetHeight + filler!.offsetHeight/2 */target.offsetHeight / 2;
             } else {
-                runners![1].style.left = click - runnerHalf + 'px';
-                filler!.style.left = runners![0].style.left;
-                filler!.style.width = runners![1].offsetLeft - runners![0].offsetLeft + runnerHalf + 'px';
+                firstZone = runners![0].offsetLeft + halfFiller;
+            }
+            if(click <= firstZone!){
+                if(runners![0].classList.contains('rangeByD-slider__runner__vertical')){
+                    runners![0].style.bottom = click - runnerHalf + 'px';
+                    filler!.style.bottom = runners![0].style.bottom + 'px';
+                    filler!.style.height = runners![0].offsetTop - runners![1].offsetTop + 'px';
+                } else {
+                    runners![0].style.left = click - runnerHalf + 'px';
+                    filler!.style.left = runners![0].style.left;
+                    filler!.style.width = runners![1].offsetLeft - runners![0].offsetLeft + runnerHalf + 'px';
+                }
+                
+            } else {
+                if(runners![0].classList.contains('rangeByD-slider__runner__vertical')){
+                    runners![1].style.top = target.offsetHeight - click - runners![1].offsetHeight + "px";
+                    filler!.style.bottom = runners![0].style.bottom + 'px';
+                    filler!.style.height = runners![0].offsetTop - runners![1].offsetTop + 'px';
+                }else {
+                    runners![1].style.left = click - runnerHalf + 'px';
+                    filler!.style.left = runners![0].style.left;
+                    filler!.style.width = runners![1].offsetLeft - runners![0].offsetLeft + runnerHalf + 'px';
+                }
+                
             }
         } else {
             if(runners![0].classList.contains('bottom-runner')){

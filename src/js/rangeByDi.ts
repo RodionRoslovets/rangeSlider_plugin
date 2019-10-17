@@ -16,5 +16,6 @@ declare global{//Обьявляем глобальный интерфейс, т.
 
         this.html(view.slider);
         
+        
     };
 })(jQuery);

@@ -7,23 +7,21 @@ export class View {
     public filler: HTMLElement;
     public runner: HTMLElement;
     public runner2?: HTMLElement;
-    // public slider:number;
-    // public base:number;
-    // public filler:number;
-    // public runner:number;
+    public a;
+    public values:HTMLElement;
+    public rangeValue: HTMLElement;
+    public rangeValue2?: HTMLElement; 
+    public params: Options;
 
-    constructor(options?:Options) {
-        // this.slider = 1;
-        // this.runner = 1;
-        // this.base = 1;
-        // this.filler =1;
+    constructor() {
 
         //Создали элементы в документе
         this.slider = document.createElement('div');
         this.base = document.createElement('div');
         this.filler = document.createElement('div');
         this.runner = document.createElement('div');
-
+        this.values = document.createElement('div');
+        this.rangeValue = document.createElement('div');
 
         //Назначаем классы
         this.runner.classList.add('rangeByD-slider__runner');
@@ -31,58 +29,27 @@ export class View {
         this.filler.classList.add('rangeByD-slider__filler');
         this.base.classList.add('rangeByD-slider__base');
         this.slider.classList.add('rangeByD-slider');
-        //Если есть обьект опций
-        if(options){
-            //Вариант с диапазоном
-            if(options.range){
-                //Создаем второй бегунок и назначаем ему классы
-                this.runner2 = document.createElement('div');
-                this.runner2.classList.add('rangeByD-slider__runner');
-                this.runner2.classList.add('right-runner');
-                //Заполнителю присваиваем класс диапазон 
-                this.filler.classList.add('filler-range');         
-            }
-            //Вариант с вертикальным видом
-            if(options.vertical){
-                //Элементам присваиваем классы вертикального вида
-                this.slider.classList.add('vertical-view');
-                this.base.classList.add('vertical-view');
-                this.runner.classList.remove('left-runner');
-                this.runner.classList.add('rangeByD-slider__runner__vertical');
-                this.runner.classList.add('bottom-runner');
-                this.filler.classList.add('vertical-view');
-                //Вертикальный вид и диапазон
-                if(options.range){
-                    //Создаем второй бегунок под вертикальный вид
-                    this.runner2 = document.createElement('div');
-                    this.runner2.classList.add('rangeByD-slider__runner');
-                    this.runner2.classList.add('rangeByD-slider__runner__vertical');
-                    this.runner2.classList.add('top-runner');
-                    this.filler.classList.add('filler-range'); 
-                }
-            }
-        }
-        
+        this.values.classList.add('rangeByD-slider__values');
+        this.rangeValue.classList.add('rangeByDi-slider__first-value');
+                
         //Добавляем бегунок и заполнитель в базу 
         this.base.appendChild(this.runner);
         this.base.appendChild(this.filler);
-        
-        //При наличии второго бегунка добавляяем его туда же и назначаем ему обработчик
-        if(this.runner2){
-            this.base.appendChild(this.runner2);
-            this.runner2.addEventListener('mousedown', this.moveSlider);
-        }
 
-        //Добавляем базу в слайдер
+        //Добавляем значения в блок значений
+        this.values.appendChild(this.rangeValue);
+        
+        //Добавляем базу и значения в слайдер
+        this.slider.appendChild(this.values);
         this.slider.appendChild(this.base);
 
         //Первому бегунку и базе назначаем соответствующие методы
-        this.runner.addEventListener('mousedown', this.moveSlider);
         this.base.addEventListener('click', this.clickMove);
-
-
+        
+        this.params = {};
     }
 
+    
     //Функция движения ползунка при нажатии и движении мыши
     moveSlider(e) {
         //переменные - база, бегунок(на который нажали), середина бегунка, заполнитель, координаты базы относительно окна
@@ -99,6 +66,8 @@ export class View {
                 filler = parent.children[i];
             }
         }
+
+             
 
         //По движению мыши двигаем ползунок и задаем положение и ширину/высоту заполнителю
         document.onmousemove = (e) => {
@@ -215,13 +184,14 @@ export class View {
                         }
                     }
                 }
-            }   
+            } 
         }
 
         //Отпустили кнопку мыши - функции приравнялись к null
         document.onmouseup = () => {
             document.onmousemove = document.onmouseup = null;
-        }        
+        } 
+               
     }
 
     //Функция клика по базе и филлеру
@@ -325,6 +295,79 @@ export class View {
            
         }
              
+    }
+    
+    //Функция изменяющаяя параметры вида из презентера
+    setCustomView(opt:Options){
+        //Своему обьекту опций присваиваем обьект опций из параметров презентера
+        for (let key in opt ){
+            if(opt.hasOwnProperty(key)){
+                this.params[key] = opt[key];
+            }
+        }       
+
+        //Вариант с диапазоном
+        if(this.params.range){
+            //Создаем второй бегунок и назначаем ему классы
+            this.runner2 = document.createElement('div');
+            this.runner2.classList.add('rangeByD-slider__runner');
+            this.runner2.classList.add('right-runner');
+            //Создаем второе значение и назначаем ему классы
+            this.rangeValue2 = document.createElement('div');
+            this.rangeValue2.classList.add('rangeByDi-slider__second-value');
+            this.values.classList.add('values-range');
+            //Заполнителю присваиваем класс диапазон 
+            this.filler.classList.add('filler-range');         
+        }
+
+        //Вариант с вертикальным видом
+        if(this.params.vertical){
+            //Элементам присваиваем классы вертикального вида
+            this.slider.classList.add('vertical-view');
+            this.base.classList.add('vertical-view');
+            this.runner.classList.remove('left-runner');
+            this.runner.classList.add('rangeByD-slider__runner__vertical');
+            this.runner.classList.add('bottom-runner');
+            this.values.classList.add('vertical-view');
+            this.rangeValue.classList.add('vertical-value')
+            this.filler.classList.add('vertical-view');
+
+            //Вертикальный вид и диапазон
+            if(this.params.range){
+                //Создаем второй бегунок под вертикальный вид
+                this.runner2 = document.createElement('div');
+                this.runner2.classList.add('rangeByD-slider__runner');
+                this.runner2.classList.add('rangeByD-slider__runner__vertical');
+                this.runner2.classList.add('top-runner');
+                this.values.classList.add('values-range');
+                //Создаем второе значение и назначаем ему классы
+                this.rangeValue2 = document.createElement('div');
+                this.rangeValue2.classList.add('rangeByDi-slider__second-value');
+                this.rangeValue2.classList.add('vertical-value');
+                this.filler.classList.add('filler-range'); 
+            }
+        }
+        
+        //  При наличии второго бегунка добавляяем его туда же и назначаем ему обработчик
+        if(this.runner2 && this.rangeValue2){
+            this.base.appendChild(this.runner2);
+            this.values.appendChild(this.rangeValue2);
+        }
+
+        //Если есть кастомные значения min и max
+        if(this.params.minVal || this.params.minVal === 0){
+            this.rangeValue.innerText = `${this.params.minVal}`;
+
+            if(this.rangeValue2 && this.params.maxVal || this.params.maxVal === 0){
+                this.rangeValue2!.innerText = `${this.params.maxVal}`;
+            }
+            
+        }
+        
+    }
+
+    changeView(opt){
+        this.rangeValue.innerText = opt.minVal;
     }
     
 }

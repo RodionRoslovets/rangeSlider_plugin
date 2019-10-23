@@ -1,6 +1,5 @@
 import { Options } from "./rangePresent";
 import { viewData } from "./rangePresent";
-import { Presenter } from "./rangePresent";
 
 export class Model {
     private min:number;
@@ -12,6 +11,7 @@ export class Model {
     private width:number;
 
     constructor(){
+        //Значения по умолчанию
         this.min = -1;
         this.max = 100;
         this.minRange = -1;
@@ -20,6 +20,7 @@ export class Model {
         this.width = 0;
     }
 
+    //Получить значения из модели
     getModelVals():Options{
         return {
             minVal:this.min,
@@ -27,39 +28,50 @@ export class Model {
         }
     }
 
-    setCustomModel(opt:Options){
-        this.min = opt.minVal || this.min;
-        this.max = opt.maxVal || this.max;
+    //Установить значения модели извне
+    setCustomModel(opt:Options):void{
+        this.min = opt.minVal ? opt.minVal : this.min;
+        this.max = opt.maxVal ? opt.maxVal : this.min;
         this.minRange = opt.minVal || this.minRange;
-        this.maxRange = opt.maxVal || this.maxRange;
+        this.maxRange = opt.maxVal || opt.minVal! + 100 || this.maxRange;//На случай неверного диапазона прибавляем к минимуму 100
     }
 
-    setValues(opt:viewData, presenter){
+    //Установить значения, полученые при движении ползунка
+    setValues(opt:viewData):void{
         this.val = opt.clickValue;
         this.width = opt.baseValue;
         if(opt.clickValue2){
             this.val2 = opt.clickValue2;
         }
-        this.count(presenter);
+        this.countRangeValues();
 
     }
 
-    count(presenter:Presenter){
+    //Посчитать значения из данных ползунка в зависимости от условий
+    countRangeValues():void{
+        this.min = this.count(this.width, this.val, this.minRange, this.maxRange);
+        
+        if(this.val2){
+            this.max = this.count(this.width, this.val2, this.minRange, this.maxRange);
+        }               
+    }
+
+    //Функция подсчета
+    count(width:number, val:number, rangeMin:number, rangeMax:number):number{
         let percent:number,
             value:number,
-            range:number;
+            range:number,
+            eq:number;
 
-
-        percent = +(this.width / 100).toFixed(2);
+        percent = +(width / 100).toFixed(2);
         console.log(`Один процент ширины ${percent}`);
-        value = Math.round(this.val / percent);
+        value = +(val / percent).toFixed(2);
         console.log(`Значение отступа ползунка в процентах ${value}%`);
-        range = (this.maxRange - this.minRange)/100;
+        range = +((rangeMax - rangeMin)/100).toFixed(2);
         console.log(`Диапазон значений ${range}`);
-        this.min = Math.round(range * value) + this.minRange;
-        console.log(this.min);
-        
-                
+        eq = Math.round(range * value) + rangeMin;
+        eq <= rangeMin ? eq = rangeMin : eq = eq;
+        eq >= rangeMax ? eq = rangeMax : eq = eq;
+        return eq
     }
-
 }

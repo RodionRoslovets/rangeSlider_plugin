@@ -6,6 +6,7 @@ export interface Options {
     vertical?:boolean;
     minVal?:number;
     maxVal?:number;
+    tooltip?:boolean;
 }
 
 export interface viewData{
@@ -29,7 +30,7 @@ export class Presenter{
         this.viewData = {clickValue:0, baseValue:0}
     }
 
-    setOptToView(view:View, options:Options){
+    setOptToView(view:View, options:Options):void{
         let opt:Options = {};
 
         for (const key in options) {
@@ -41,11 +42,11 @@ export class Presenter{
         view.setCustomView(opt!); 
     }
 
-    setOptToModel(model:Model, options:Options){
+    setOptToModel(model:Model, options:Options):void{
         model.setCustomModel(options);
     }
 
-    getOptionsFromVIew(view:View, model:Model){
+    getOptionsFromVIew(view:View, model:Model):void{
         if(view.runner2){
             this.viewData.clickValue2 = view.runner2.offsetLeft;
         }
@@ -54,14 +55,14 @@ export class Presenter{
             this.viewData.clickValue = view.base.offsetHeight - view.runner.offsetTop - view.runner.offsetHeight;
 
             if(view.runner2){
-                this.viewData.clickValue2 = view.base.offsetHeight - view.runner2.offsetTop - view.runner2.offsetHeight;
+                this.viewData.clickValue2 = view.base.offsetHeight - view.runner2.offsetTop;
             }
         }else{
             this.viewData.baseValue = view.base.offsetWidth - view.runner.offsetWidth;
             this.viewData.clickValue = view.runner.offsetLeft;
         }
 
-        model.setValues(this.viewData, this);
+        model.setValues(this.viewData);
         view.changeView(model.getModelVals());
 
     }

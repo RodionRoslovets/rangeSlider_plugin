@@ -7,7 +7,8 @@ export class View {
     public filler: HTMLElement;
     public runner: HTMLElement;
     public runner2?: HTMLElement;
-    public a;
+    public tooltip?:HTMLElement;
+    public tooltip2?:HTMLElement;
     public values:HTMLElement;
     public rangeValue: HTMLElement;
     public rangeValue2?: HTMLElement; 
@@ -51,13 +52,13 @@ export class View {
 
     
     //Функция движения ползунка при нажатии и движении мыши
-    moveSlider(e) {
+    moveSlider(e) :void{
         //переменные - база, бегунок(на который нажали), середина бегунка, заполнитель, координаты базы относительно окна
-        let parent: HTMLElement = e.target.parentElement,
+        let parent = e.target.parentElement,
             runner: HTMLElement = e.target,
             runnerMiddle: number = runner.offsetWidth / 2,
             filler,
-            // runnerCoords = e.target.getBoundingClientRect(),
+            tooltip,
             baseCoords = e.target.parentElement.getBoundingClientRect();
         
         //назначаем заполнитель в переменную    
@@ -66,11 +67,15 @@ export class View {
                 filler = parent.children[i];
             }
         }
+        //Проверяем наличие подсказки
+        if(runner.previousElementSibling && runner.previousElementSibling.classList.contains('rangeByD-slider__tooltip')){
+            tooltip = runner.previousElementSibling;
 
-             
+            tooltip.classList.add('tooltip__visible');
+        }             
 
         //По движению мыши двигаем ползунок и задаем положение и ширину/высоту заполнителю
-        document.onmousemove = (e) => {
+        document.onmousemove = (e):void => {
 
             //переменные - координата клика относительно страницы и координата клика расчитаная
             let clickCoord: number,
@@ -105,6 +110,9 @@ export class View {
 
                 //Назначается стиль left
                 runner.style.left = click + 'px';
+                if(tooltip){
+                    tooltip.style.left = click + 'px';
+                }
             }
             
             //Расчеты заполнителя
@@ -116,10 +124,10 @@ export class View {
                     if(parent.children[i].classList.contains('right-runner')){
                         //заполнитель сдвигается на левый отступ левого бегунка и его размер это расстояние от левого до правого бегунка
                         filler.style.left = runner.offsetLeft + 'px';
-                        filler.style.width = filler.nextElementSibling.offsetLeft - runner.offsetLeft + runnerMiddle + 'px';
+                        filler.style.width = parent.children[i].offsetLeft - runner.offsetLeft + runnerMiddle + 'px';
                         
                         //Если левый бегунок дошел до правого, то он не идет дальше
-                        if(runner.offsetLeft + runner.offsetWidth >= filler.nextElementSibling.offsetLeft){
+                        if(runner.offsetLeft + runner.offsetWidth >= parent.children[i].offsetLeft){
                             runner.style.left = filler.nextElementSibling.offsetLeft - runner.offsetWidth + 'px';
                             filler.style.left = runner.style.left;
                             filler.style.width = 0 + 'px';
@@ -188,14 +196,19 @@ export class View {
         }
 
         //Отпустили кнопку мыши - функции приравнялись к null
-        document.onmouseup = () => {
+        document.onmouseup = ():void => {
+            if(runner.previousElementSibling && runner.previousElementSibling.classList.contains('rangeByD-slider__tooltip')){
+                let tooltip = runner.previousElementSibling;
+    
+                tooltip.classList.remove('tooltip__visible');
+            }
             document.onmousemove = document.onmouseup = null;
         } 
                
     }
 
     //Функция клика по базе и филлеру
-    clickMove(e) {
+    clickMove(e):void {
         //цель клика - база
         let target = e.target;
 
@@ -298,7 +311,7 @@ export class View {
     }
     
     //Функция изменяющаяя параметры вида из презентера
-    setCustomView(opt:Options){
+    setCustomView(opt:Options):void{
         //Своему обьекту опций присваиваем обьект опций из параметров презентера
         for (let key in opt ){
             if(opt.hasOwnProperty(key)){
@@ -347,10 +360,23 @@ export class View {
                 this.filler.classList.add('filler-range'); 
             }
         }
+
+        //Вариант с подсказкой
+        if(this.params.tooltip){
+            this.tooltip = document.createElement('div');
+            this.tooltip.classList.add('rangeByD-slider__tooltip');
+            this.tooltip.innerText = `${this.params.minVal}`;
+            this.base.insertBefore(this.tooltip, this.runner);
+        }
         
         //  При наличии второго бегунка добавляяем его туда же и назначаем ему обработчик
         if(this.runner2 && this.rangeValue2){
+            this.tooltip2 = document.createElement('div');
+            this.tooltip2.classList.add('rangeByD-slider__tooltip');
+            this.tooltip2.classList.add('tooltip-right');
+            this.tooltip2.innerText = `${this.params.maxVal}`;
             this.base.appendChild(this.runner2);
+            this.base.insertBefore(this.tooltip2, this.runner2);
             this.values.appendChild(this.rangeValue2);
         }
 
@@ -366,8 +392,17 @@ export class View {
         
     }
 
-    changeView(opt){
+    changeView(opt):void{
         this.rangeValue.innerText = opt.minVal;
+        if(this.rangeValue2){
+            this.rangeValue2.innerText = opt.maxVal;
+        }
+        if(this.tooltip){
+            this.tooltip.innerText = opt.minVal;
+            if(this.tooltip2){
+                this.tooltip2.innerText = opt.maxVal;
+            }
+        }
     }
     
 }

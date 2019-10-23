@@ -3,7 +3,6 @@ import  {View} from  './rangeView';
 import  {Model} from  './rangeModel';
 import  {Presenter} from  './rangePresent';
 import  {Options} from  './rangePresent';
-import { get } from 'http';
 
 declare global{//Обьявляем глобальный интерфейс, т.к. при наличии импортов и экспортов изменения глобальных интерфейсов не происходят, так как создается новый тип
     interface JQuery {
@@ -18,7 +17,7 @@ declare global{//Обьявляем глобальный интерфейс, т.
             model = new Model(),
             presenter = new Presenter(model, view, options);
 
-        function getobj(){
+        function getobj():void{
             presenter.getOptionsFromVIew(view, model);            
         }
 

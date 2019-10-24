@@ -12,9 +12,9 @@ export class Model {
 
     constructor(){
         //Значения по умолчанию
-        this.min = -1;
+        this.min = 0;
         this.max = 100;
-        this.minRange = -1;
+        this.minRange = 0;
         this.maxRange = 100;
         this.val = 0;
         this.width = 0;
@@ -30,10 +30,10 @@ export class Model {
 
     //Установить значения модели извне
     setCustomModel(opt:Options):void{
-        this.min = opt.minVal ? opt.minVal : this.min;
-        this.max = opt.maxVal ? opt.maxVal : this.min;
-        this.minRange = opt.minVal || this.minRange;
-        this.maxRange = opt.maxVal || opt.minVal! + 100 || this.maxRange;//На случай неверного диапазона прибавляем к минимуму 100
+            this.min = opt.minVal ? opt.minVal : this.min;
+            this.max = opt.maxVal ? opt.maxVal : this.max;
+            this.minRange = opt.minVal ? opt.minVal : this.min;
+            this.maxRange = opt.maxVal ? opt.maxVal : this.max;
     }
 
     //Установить значения, полученые при движении ползунка
@@ -64,14 +64,13 @@ export class Model {
             eq:number;
 
         percent = +(width / 100).toFixed(2);
-        console.log(`Один процент ширины ${percent}`);
         value = +(val / percent).toFixed(2);
-        console.log(`Значение отступа ползунка в процентах ${value}%`);
         range = +((rangeMax - rangeMin)/100).toFixed(2);
-        console.log(`Диапазон значений ${range}`);
         eq = Math.round(range * value) + rangeMin;
-        eq <= rangeMin ? eq = rangeMin : eq = eq;
+
+        eq < rangeMin ? eq = rangeMin : eq = eq;
         eq >= rangeMax ? eq = rangeMax : eq = eq;
+        
         return eq
     }
 }

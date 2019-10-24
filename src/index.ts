@@ -10,19 +10,21 @@ let opt:Options = {
 };
 let opt2:Options = {
     range:true,
-    minVal:100,
-    maxVal:999,
+    minVal:0,
+    maxVal:999, 
     tooltip:true
 };
 let opt3:Options = {
     vertical:true,
-    minVal:0,
-    maxVal:100
+    minVal:10, 
+    maxVal:100, 
+    tooltip:true
 };
 let opt4:Options = {
     range:true,
     vertical:true,
-    minVal:10000
+    minVal:100,
+    maxVal:200
 };
 
 

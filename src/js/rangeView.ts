@@ -98,9 +98,15 @@ export class View {
                 //Если это верхний бегунок то расчитывается и назначается стиль top
                 if(runner.classList.contains('top-runner')){
                     runner.style.top = parent.offsetHeight - click - runner.offsetHeight + "px";
+                    if(tooltip){
+                        tooltip.style.top = parent.offsetHeight - click - runner.offsetHeight + "px";
+                    }
                 }else{
                     //Если это нижний бегунок то расчитывается и назначается стиль bottom
                     runner.style.bottom = click + "px";
+                    if(tooltip){
+                        tooltip.style.bottom = click + "px";
+                    }
                 }
                 
             } else {
@@ -115,7 +121,7 @@ export class View {
                 }
             }
             
-            //Расчеты заполнителя
+            //Расчеты заполнителя горизонтальные
             //Если бегунок левый
             if(runner.classList.contains('left-runner')){
                 //перебираем всех детей базы
@@ -156,6 +162,7 @@ export class View {
                 
             } 
 
+            //размеры и положение филлера вертикальные
             //Если бегунок нижний
             if(runner.classList.contains('bottom-runner')){
                 //Ищем верхний бегунок
@@ -367,16 +374,29 @@ export class View {
             this.tooltip.classList.add('rangeByD-slider__tooltip');
             this.tooltip.innerText = `${this.params.minVal}`;
             this.base.insertBefore(this.tooltip, this.runner);
+            if(this.params.vertical){
+                this.tooltip.classList.add('tooltip-bottom');
+            }
         }
         
-        //  При наличии второго бегунка добавляяем его туда же и назначаем ему обработчик
+        //  При наличии второго бегунка добавляем его в базу и назначаем ему обработчик
         if(this.runner2 && this.rangeValue2){
-            this.tooltip2 = document.createElement('div');
-            this.tooltip2.classList.add('rangeByD-slider__tooltip');
-            this.tooltip2.classList.add('tooltip-right');
-            this.tooltip2.innerText = `${this.params.maxVal}`;
             this.base.appendChild(this.runner2);
-            this.base.insertBefore(this.tooltip2, this.runner2);
+            //добавляем тултип
+            if(this.params.tooltip){
+                this.tooltip2 = document.createElement('div');
+                this.tooltip2.classList.add('rangeByD-slider__tooltip');
+                this.tooltip2.classList.add('tooltip-right');
+                this.tooltip2.innerText = `${this.params.maxVal}`;
+
+                if(this.runner2.classList.contains('rangeByD-slider__runner__vertical')){
+                    this.tooltip2.classList.remove('tooltip-right');
+                    this.tooltip2.classList.add('tooltip-top');
+                }
+
+                this.base.insertBefore(this.tooltip2, this.runner2);
+            }
+            
             this.values.appendChild(this.rangeValue2);
         }
 
@@ -384,11 +404,15 @@ export class View {
         if(this.params.minVal || this.params.minVal === 0){
             this.rangeValue.innerText = `${this.params.minVal}`;
 
-            if(this.rangeValue2 && this.params.maxVal || this.params.maxVal === 0){
-                this.rangeValue2!.innerText = `${this.params.maxVal}`;
-            }
+            if(this.rangeValue2){
+                this.rangeValue2.innerText = `${this.params.maxVal}`;
+            } /* else if (this.rangeValue2 && !this.params.maxVal) {
+                let max = this.params.minVal + 100;
+                
+                this.rangeValue2!.innerText = `${max}`;
+            } */
             
-        }
+        } 
         
     }
 

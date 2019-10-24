@@ -60,7 +60,7 @@
             justify-content:space-between;
         }
         &.vertical-view{
-            flex-direction: column;
+            flex-direction: column-reverse;
             align-items:center;
             margin-right:10px;
         }
@@ -87,6 +87,14 @@
         transition:opacity .1s linear;
         &.tooltip-right{
             left:93%;
+        }
+        &.tooltip-bottom{
+            left:15px;
+            bottom:0px;
+        }
+        &.tooltip-top{
+            left:15px;
+            top:0;
         }
         &.tooltip__visible{
             opacity: 1;

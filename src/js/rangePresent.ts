@@ -19,13 +19,14 @@ export class Presenter{
     private viewData:viewData;
 
     constructor (model:Model, view:View, options?:Options){
+        
         view.setCustomView(model.getModelVals());
-
-        //Если обьект опций передан, то они передаются в Вид
+        //Если обьект опций передан, то они передаются в Вид и Модель
         if(options){
-            this.setOptToView(view, options);
             this.setOptToModel(model, options);
-        }
+            this.setOptToView(view, options);
+            
+        }       
 
         this.viewData = {clickValue:0, baseValue:0}
     }

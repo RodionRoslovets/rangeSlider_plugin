@@ -13,25 +13,30 @@ declare global{//Обьявляем глобальный интерфейс, т.
 (function($){
      $.fn.myPlugin = function(options) {
 
-        let view = new View(),
-            model = new Model(),
+        let view = new View();
+        this.html(view.slider); 
+        let    model = new Model(),
             presenter = new Presenter(model, view, options);
+
+        
 
         function getobj():void{
             presenter.getOptionsFromVIew(view, model);            
         }
 
-        view.runner.addEventListener('mousedown', view.moveSlider);
+        view.runner.addEventListener('mousedown', presenter.moveSlider.bind(presenter));
         view.runner.addEventListener('mousedown', ()=>{
             document.addEventListener('mousemove', getobj);
-            
+
             document.addEventListener('mouseup', ()=>{
                 document.removeEventListener('mousemove', getobj);
             });
         });
+        
+        
 
         if(view.runner2){
-            view.runner2.addEventListener('mousedown', view.moveSlider);
+            view.runner2.addEventListener('mousedown', presenter.moveSlider.bind(presenter));
 
             view.runner2.addEventListener('mousedown', ()=>{
                 document.addEventListener('mousemove', getobj);
@@ -42,8 +47,6 @@ declare global{//Обьявляем глобальный интерфейс, т.
             });
         }
         
-        this.html(view.slider);
-        
-        
+               
     };
 })(jQuery);

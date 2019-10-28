@@ -9,6 +9,7 @@ export class Model {
     private val:number;
     private val2?:number;
     private width:number;
+    private step:number;
 
     constructor(){
         //Значения по умолчанию
@@ -18,6 +19,7 @@ export class Model {
         this.maxRange = 100;
         this.val = 0;
         this.width = 0;
+        this.step = 1;
     }
 
     //Получить значения из модели
@@ -34,6 +36,8 @@ export class Model {
             this.max = opt.maxVal ? opt.maxVal : this.max;
             this.minRange = opt.minVal ? opt.minVal : this.min;
             this.maxRange = opt.maxVal ? opt.maxVal : this.max;
+            this.step = opt.step ? opt.step : this.step;
+            this.min = opt.from ? opt.from : this.min;
     }
 
     //Установить значения, полученые при движении ползунка
@@ -66,11 +70,20 @@ export class Model {
         percent = +(width / 100).toFixed(2);
         value = +(val / percent).toFixed(2);
         range = +((rangeMax - rangeMin)/100).toFixed(2);
-        eq = Math.round(range * value) + rangeMin;
+        eq = +((range * value) + rangeMin).toFixed(2);
 
         eq < rangeMin ? eq = rangeMin : eq = eq;
         eq >= rangeMax ? eq = rangeMax : eq = eq;
+        //Проверка на шаг
         
+            if(eq % this.step  > this.step /2){
+                eq += this.step - (eq % this.step);
+            }
+            else{
+                eq -= eq % this.step;
+            }
+       
+
         return eq
     }
 }

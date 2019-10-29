@@ -13,9 +13,9 @@ let opt:Options = {
 let opt2:Options = {
     range:true,
     minVal:0,
-    maxVal:1000, 
+    maxVal:15000, 
     tooltip:true,
-    step:5,
+    step:100,
     from:500,
     to:600
 
@@ -30,6 +30,7 @@ let opt3:Options = {
 let opt4:Options = {
     range:true,
     vertical:true,
+    tooltip:true,
     minVal:100,
     maxVal:200,
     step:5

@@ -78,32 +78,16 @@ export class Presenter{
 
     }
 
-    //Функция движения ползунка при нажатии и движении мыши
-    moveSlider(e) :void{
+    //Функция движения бегунка
+    moveSlider(e){
 
-        //переменные - база, бегунок(на который нажали), середина бегунка, заполнитель, координаты базы относительно окна
-        let parent = e.target.parentElement,
+        //Переменные - родитель (база), бегунок(цель клика), координаты базы
+        let parent: HTMLElement = e.target.parentElement,
             runner: HTMLElement = e.target,
-            runnerMiddle: number = runner.offsetWidth / 2,
-            filler,
-            tooltip,
             baseCoords = e.target.parentElement.getBoundingClientRect();
         
-        //назначаем заполнитель в переменную    
-        for(let i = 0; i < parent.children.length; i++){
-            if(parent.children[i].classList.contains('rangeByD-slider__filler')){
-                filler = parent.children[i];
-            }
-        }
-        //Проверяем наличие подсказки
-        if(runner.previousElementSibling && runner.previousElementSibling.classList.contains('rangeByD-slider__tooltip')){
-            tooltip = runner.previousElementSibling;
-
-            tooltip.classList.add('tooltip__visible');
-        }             
-
-        //По движению мыши двигаем ползунок и задаем положение и ширину/высоту заполнителю
-        document.onmousemove = (e):void => {
+        //При движении мыши двигаем за ней ползунок
+        document.onmousemove=(e)=>{
 
             //переменные - координата клика относительно страницы и координата клика расчитаная
             let clickCoord: number,
@@ -114,184 +98,163 @@ export class Presenter{
                 clickCoord = e.clientY;
                 click = Math.round(parent.offsetHeight - (clickCoord - baseCoords.top) - runner.offsetHeight/2);
 
-            } else {//если горизонтальный то из горизонтальных
-                clickCoord = e.pageX;
-                click = Math.round(clickCoord - baseCoords.left - runnerMiddle);
-            }
-           
-            //если бегунок вертикальный то проверки выполняются по вертикальным составляющим родителя
-            if(runner.classList.contains('rangeByD-slider__runner__vertical')){
+                //Проверка на вхождение в базу
                 click < 0 ? click = 0 : click = click;
-                click >= parent.offsetHeight - runnerMiddle ? click = parent.offsetHeight - runner.offsetHeight/2 : click = click;
-                //Если это верхний бегунок то расчитывается и назначается стиль top
-                if(runner.classList.contains('top-runner')){
-                    if(this.options){
-                        if(this.options.step){
-                            let pr = Math.round(parent.offsetHeight / ((this.options.maxVal! - this.options.minVal!) / this.options.step));
-                            
-                            for(;click % pr != 0;){
-                                if(click % pr > pr/2){
-                                    click++
-                                }
-                                else{
-                                    click--
-                                }
-                            }                    
-                            
-                        }
-                    }
-                    runner.style.top = parent.offsetHeight - click - runner.offsetHeight + "px";
+                click >= parent.offsetHeight - runner.offsetHeight ? click = parent.offsetHeight - runner.offsetHeight : click = click;
 
-                    if(tooltip){
-                        tooltip.style.top = parent.offsetHeight - click - runner.offsetHeight + "px";
-                    }
-                }else{
+                //Если бегунок верхний то меняем стиль top
+                if(runner.classList.contains('top-runner')){                   
+                    runner.style.top = parent.offsetHeight - click - runner.offsetHeight + "px";
+                } else {
                     //Если это нижний бегунок то расчитывается и назначается стиль bottom
-                    if(this.options){
-                        if(this.options.step){
-                            let pr = Math.round(parent.offsetHeight / ((this.options.maxVal! - this.options.minVal!) / this.options.step));
-                            
-                            for(;click % pr != 0;){
-                                if(click % pr > pr/2){
-                                    click++
-                                }
-                                else{
-                                    click--
-                                }
-                            }                    
-                            
-                        }
-                    }
                     runner.style.bottom = click + "px";
-                    if(tooltip){
-                        tooltip.style.bottom = click + "px";
-                    }
                 }
-                
             } else {
-                //Если бегунок горизонтальный то проверки выполняются по горизонтальным составляющим родителя
+                //Если бегунок горизонтальный то переменные расчитываются из горизонтальных составляющих
+                clickCoord = e.pageX;
+                click = Math.round(clickCoord - baseCoords.left - runner.offsetWidth/2);
+
+                //Проверка на вхождение в базу
                 click < 0 ? click = 0 : click = click;
                 click >= parent.offsetWidth - runner.offsetWidth ? click = parent.offsetWidth - runner.offsetWidth : click = click;
 
-                if(this.options){
-                    if(this.options.step){
-                        let pr = Math.round(parent.offsetWidth / ((this.options.maxVal! - this.options.minVal!) / this.options.step));
-                        
-                        for(;click % pr != 0;){
-                            if(click % pr > pr/2){
-                                click++
-                            }
-                            else{
-                                click--
-                            }
-                        }                    
-                        
-                    }
-                }
-                //Назначается стиль left
+                //Назначается стиль left независимо от того левый или правый бегунок
                 runner.style.left = click + 'px';
-                if(tooltip){
-                    tooltip.style.left = click + 'px';
+            }  
+            //Проверка на достижение второго бегунка
+
+            //Проверяем наличие второго бегунка
+            let runners:Array<any> = [];
+            for(let i = 0; i < parent.children.length;i++){
+                if(parent.children[i].classList.contains('rangeByD-slider__runner')){
+                    runners.push(parent.children[i]);
                 }
             }
             
-            //Расчеты заполнителя горизонтальные
-            //Если бегунок левый
-            if(runner.classList.contains('left-runner')){
-                //перебираем всех детей базы
-                for(let i = 0; i < parent.children.length; i++){
-                    //если есть правый бегунок
-                    if(parent.children[i].classList.contains('right-runner')){
-                        //заполнитель сдвигается на левый отступ левого бегунка и его размер это расстояние от левого до правого бегунка
-                        filler.style.left = runner.offsetLeft + 'px';
-                        filler.style.width = parent.children[i].offsetLeft - runner.offsetLeft + runnerMiddle + 'px';
-                        
-                        //Если левый бегунок дошел до правого, то он не идет дальше
-                        if(runner.offsetLeft + runner.offsetWidth >= parent.children[i].offsetLeft){
-                            runner.style.left = filler.nextElementSibling.offsetLeft - runner.offsetWidth + 'px';
-                            filler.style.left = runner.style.left;
-                            filler.style.width = 0 + 'px';
-                        }
-                        
-                    } else {
-                        //Если правого бегунка нет
-                        filler.style.width = runner.offsetLeft + runnerMiddle + 'px';
+            //Если бегунков два, то назначаем проверку в зависимости от бегунка
+            if(runners.length == 2){
+                if(runner.classList.contains('left-runner')){
+                    if(runner.offsetLeft + runner.offsetWidth >= runners[1].offsetLeft){
+                        runner.style.left = runners[1].offsetLeft - runner.offsetWidth + 'px';
                     }
-                }                
-            } else {
-                //Если бегунок не левый
-                //Если бегунок вертикальный
-                if(runner.classList.contains('rangeByD-slider__runner__vertical')){
-                    //Расчитываем значение заполнителя из вертикальных параметров
-                    filler.style.height = parent.offsetHeight - runner.offsetTop - runner.offsetHeight/2 + 'px';
-                }else {
-                    //Расчитываем значения заполнителя из горизонтальных параметров
-                    filler.style.width = runner.offsetLeft - filler.previousSibling.offsetLeft + runnerMiddle + 'px';
-
-                    //Если правый бегунок дошел до левого, то дальше не двигается
-                    if(runner.offsetLeft <= filler.previousElementSibling.offsetLeft + runner.offsetWidth){
-                         runner.style.left = filler.previousElementSibling.offsetLeft + runner.offsetWidth + 'px';
+                } else if(runner.classList.contains('right-runner')){
+                    if(runner.offsetLeft <= runners[0].offsetLeft + runners[0].offsetWidth){
+                        runner.style.left = runners[0].offsetLeft + runner.offsetWidth + 'px';
+                    }
+                } else if(runner.classList.contains('top-runner')){
+                    if(runner.offsetTop + runner.offsetHeight > runners[0].offsetTop){
+                        runner.style.top = runners[0].offsetTop - runner.offsetHeight + 'px';
+                    }
+                } else if(runner.classList.contains('bottom-runner')){
+                    if(runner.offsetTop < runners[1].offsetTop + runners[1].offsetHeight){
+                        runner.style.bottom = parent.offsetHeight - (runners[1].offsetTop + runners[1].offsetHeight * 2) + 'px';
                     }
                 }
-                
-            } 
+            }
 
-            //размеры и положение филлера вертикальные
-            //Если бегунок нижний
-            if(runner.classList.contains('bottom-runner')){
-                //Ищем верхний бегунок
-                for(let i= 0; i < parent.children.length; i++){
-                    if(parent.children[i].classList.contains('top-runner')){
-                        let topRunner:any = parent.children[i];
-                        //Стили для заполнителя 
-                        filler.style.bottom = runner.style.bottom;
-                        filler.style.height = parent.offsetHeight - click - topRunner.offsetTop - runner.offsetHeight/2 + 'px';
-
-                        //Если нижний бегунок дошел до верхнего то он не двигается
-                        if(runner.offsetTop <= topRunner.offsetHeight + topRunner.offsetTop){
-                            runner.style.bottom = parent.offsetHeight - (topRunner.offsetHeight*2 + topRunner.offsetTop) + 'px';
-                            filler.style.bottom = runner.style.bottom;
-                            filler.style.height = '0px';
-                        }
-                    }
-                }
-            } else {
-                //Если не нижний
-                //Ищем нижний бегунок
-                for(let i = 0;i< parent.children.length;i++){
-                    if(parent.children[i].classList.contains('bottom-runner')){
-                        let bottomRunner:any = parent.children[i];
-                        //Стили для заполнителя
-                        filler.style.bottom = bottomRunner.style.bottom || '0px';
-                        filler.style.height = parent.offsetHeight - runner.offsetTop - (parent.offsetHeight - bottomRunner.offsetTop) + runner.offsetHeight/2 + 'px';
-
-                        //Если верхний бегунок доходит до нижнего то он останавливается
-                        if(runner.offsetTop + runner.offsetHeight >= bottomRunner.offsetTop){
-                            runner.style.top = bottomRunner.offsetTop - bottomRunner.offsetHeight + 'px';
-                            filler.style.bottom = bottomRunner.style.bottom || '0px';
-                            filler.style.height = '0px';
-                        }
-                    }
-                }
-            } 
             
             
+            //Вызываем изменение филлера
+            this.changeFiller(runner);
         }
-        
         //Отпустили кнопку мыши - функции приравнялись к null
         document.onmouseup = ():void => {
-            if(runner.previousElementSibling && runner.previousElementSibling.classList.contains('rangeByD-slider__tooltip')){
-                let tooltip = runner.previousElementSibling;
-    
-                tooltip.classList.remove('tooltip__visible');
-            }
+            //при наличии ултипа делаем его невидимым
+            if(runner.previousElementSibling){
+                if(runner.previousElementSibling!.classList.contains('tooltip__visible')){
+                    runner.previousElementSibling!.classList.remove('tooltip__visible');
+                }
+            }            
+
+            //обнуляем функции
             document.onmousemove = document.onmouseup = null;
         } 
-               
     }
 
-     //Функция клика по базе и филлеру
-     clickMove(e):void {
+    //Функция изменения филлера
+    changeFiller(e: HTMLElement){
+        //Переменные - филлер, бегунок и массив бегунков
+        let runner: HTMLElement = e,
+            filler,
+            runners:Array<any> = [];
+        
+        //Обозначаем филлер и массив бегунков
+        for(let i = 0;i < runner.parentElement!.children.length; i++){
+            if(runner.parentElement!.children[i].classList.contains('rangeByD-slider__filler')){
+                filler = runner.parentElement!.children[i];
+            }
+            if(runner.parentElement!.children[i].classList.contains('rangeByD-slider__runner')){
+                runners.push(runner.parentElement!.children[i]);
+            }
+        }
+        
+        //Если филлер горизонтальный
+        if(!filler.classList.contains('vertical-view')){
+            //Если филлер обычный
+            if(!filler.classList.contains('filler-range')){
+                filler.style.width = runner.offsetLeft + runner.offsetWidth/2 + 'px';
+            } else {
+                //Если филлер для диапазона
+                //Если движется левый бегунок
+                if(runner.classList.contains('left-runner')){
+                    filler.style.left = runner.offsetLeft + runner.offsetWidth/2 + 'px';
+                    filler.style.width = runners[1].offsetLeft - runner.offsetLeft + 'px';
+                } else {
+                    //Если бегунок правый
+                    filler.style.width = runner.offsetLeft - runners[0].offsetLeft + runner.offsetWidth/2 + 'px';
+                }                    
+            }
+        } //Если филлер вертикальный
+        else {
+            //Если филлер обычный
+            if(!filler.classList.contains('filler-range')){
+                filler.style.height = runner.parentElement!.offsetHeight - runner.offsetTop - runner.offsetHeight/2 + 'px';
+            } else {
+                //Если филлер для диапазона 
+                //Если движется нижний бегунок
+                if(runner.classList.contains('bottom-runner')){
+                    filler.style.bottom = runner.parentElement!.offsetHeight - runner.offsetTop - runner.offsetHeight/2 + 'px';
+                    filler.style.height = (runner.parentElement!.offsetHeight - runners[1].offsetTop) - (runner.parentElement!.offsetHeight - runner.offsetTop) + 'px';
+                } else {
+                    //Если движется верхний бегунок
+                    filler.style.height = (runner.parentElement!.offsetHeight - runner.offsetTop) - (runner.parentElement!.offsetHeight - runners[0].offsetTop) + runner.offsetHeight/4 + 'px';
+                }
+            }
+        }  
+
+        //При необходимости запускаем нужные функции
+        if(this.options){
+            //Если есть подсказка
+            if(this.options.tooltip){
+                this.moveTooltip(runner);
+            }
+        }     
+    }
+
+    //Функция движения тултипа
+    moveTooltip(e){
+        //Переменные - бегунок, тултип
+        let runner = e,
+            tooltip = runner.previousElementSibling;
+
+        //Делаем тултип видимым
+        tooltip.classList.add('tooltip__visible');
+
+        //Если тултип вертикальный и верхний
+        if(tooltip.classList.contains('tooltip-top')){
+            tooltip.style.top = runner.style.top;
+        } else if(tooltip.classList.contains('tooltip-bottom')){
+            //Есди тултип нижний
+            tooltip.style.bottom = runner.style.bottom;
+        } else { //если тултип горизонтальный
+            tooltip.style.left = runner.style.left;
+        }
+
+        
+    }
+
+    //Функция клика по базе и филлеру
+    clickMove(e):void {
         //цель клика - база
         let target = e.target;
 
